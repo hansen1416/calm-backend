@@ -12,6 +12,87 @@ CREATE TABLE IF NOT EXISTS  users (
   UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Contacts (belongs to a user)
+CREATE TABLE IF NOT EXISTS contacts (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description TEXT NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+
+  -- FKs / indexes
+  CONSTRAINT fk_contacts_user_id
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  -- Prevent duplicate contacts per user
+  UNIQUE KEY uq_contacts_user_email (user_id, email),
+
+  KEY idx_contacts_user_id (user_id),
+  KEY idx_contacts_email (email),
+  KEY idx_contacts_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tags (user-defined)
+CREATE TABLE IF NOT EXISTS tags (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  name VARCHAR(64) NOT NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+
+  CONSTRAINT fk_tags_user_id
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  UNIQUE KEY uq_tags_user_name (user_id, name),
+  KEY idx_tags_user_id (user_id),
+  KEY idx_tags_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- Contact <-> Tag (many-to-many), with user_id to enforce ownership consistency
+CREATE TABLE IF NOT EXISTS contact_tags (
+  user_id BIGINT UNSIGNED NOT NULL,
+  contact_id BIGINT UNSIGNED NOT NULL,
+  tag_id BIGINT UNSIGNED NOT NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (contact_id, tag_id),
+
+  KEY idx_contact_tags_user_id (user_id),
+  KEY idx_contact_tags_tag_id (tag_id),
+
+  -- Contact must belong to user_id
+  CONSTRAINT fk_contact_tags_contact
+    FOREIGN KEY (contact_id) REFERENCES contacts(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  -- Tag must belong to user_id
+  CONSTRAINT fk_contact_tags_tag
+    FOREIGN KEY (tag_id) REFERENCES tags(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  -- Enforce that both the contact and tag are owned by the same user
+  CONSTRAINT fk_contact_tags_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- Email campaigns (graph-based campaign builder; stores nodes/edges/viewport as JSON)
 CREATE TABLE IF NOT EXISTS  email_campaigns (
