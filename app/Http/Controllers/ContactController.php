@@ -20,7 +20,8 @@ class ContactController extends Controller
 
         $contacts = Contact::query()
             ->where('user_id', $userId)
-            ->orderBy('id')
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
             ->paginate($data['per_page'] ?? 20);
 
         return response()->json($contacts);
