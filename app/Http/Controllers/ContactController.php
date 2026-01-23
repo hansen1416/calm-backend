@@ -8,6 +8,24 @@ use Illuminate\Validation\Rule;
 
 class ContactController extends Controller
 {
+    public function index(Request $request)
+    {
+        // TODO auth: resolve current user_id
+        // $userId = $request->user()->id;
+        $userId = 1;
+
+        $data = $request->validate([
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $contacts = Contact::query()
+            ->where('user_id', $userId)
+            ->orderBy('id')
+            ->paginate($data['per_page'] ?? 20);
+
+        return response()->json($contacts);
+    }
+
     public function store(Request $request)
     {
         // TODO auth: resolve current user_id

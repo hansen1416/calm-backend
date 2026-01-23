@@ -10,4 +10,5 @@ Route::post('/email-campaigns', [EmailCampaignController::class, 'store']);
 Route::get('/email-campaigns/{email_campaign}/graph', [EmailCampaignController::class, 'getGraph']);
 Route::put('/email-campaigns/{email_campaign}/graph', [EmailCampaignController::class, 'updateGraph']);
 
+Route::get('/contacts', [ContactController::class, 'index']);
 Route::post('/contacts', [ContactController::class, 'store']);
