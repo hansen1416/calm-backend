@@ -37,10 +37,11 @@ class EmailCampaignController extends Controller
         return response()->json($email_campaign->graph_json);
     }
 
-    public function updateGraph(Request $request, EmailCampaign $email_campaign)
+    public function updateGraph(Request $request, int $email_campaign_id)
     {
         // TODO: enforce auth/ownership
         // abort_unless($request->user()->id === $email_campaign->user_id, 403);
+        $email_campaign = EmailCampaign::findOrFail($email_campaign_id);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
