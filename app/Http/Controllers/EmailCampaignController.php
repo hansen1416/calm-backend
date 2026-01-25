@@ -43,12 +43,12 @@ class EmailCampaignController extends Controller
         // abort_unless($request->user()->id === $email_campaign->user_id, 403);
 
         $data = $request->validate([
-            'nodes'    => ['required', 'array'],
-            'edges'    => ['required', 'array'],
-            'viewport' => ['nullable', 'array'],
+            'name' => ['required', 'string', 'max:255'],
+            'graph_json' => ['required', 'array'],
         ]);
 
-        $email_campaign->graph_json = $data;
+        $email_campaign->name = $data['name'];
+        $email_campaign->graph_json = $data['graph_json'];
         $email_campaign->save();
 
         return response()->json([
