@@ -34,7 +34,10 @@ class EmailCampaignController extends Controller
         // Example if you have $request->user():
         // abort_unless($request->user()->id === $email_campaign->user_id, 403);
 
-        return response()->json($email_campaign->graph_json);
+        return response()->json([
+            'name' => $email_campaign->name,
+            'graph_json' => $email_campaign->graph_json,
+        ]);
     }
 
     public function updateGraph(Request $request, int $email_campaign_id)
