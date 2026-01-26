@@ -102,6 +102,10 @@ CREATE TABLE IF NOT EXISTS  email_campaigns (
   name VARCHAR(255) NOT NULL,
   status VARCHAR(32) NOT NULL DEFAULT 'draft',   -- draft|active|archived (extend later)
 
+  mode ENUM('include','exclude') NOT NULL DEFAULT 'include',
+  kind ENUM('contact','group') NULL,
+  entity_id BIGINT UNSIGNED NULL,
+
   graph_json JSON NOT NULL,                      -- { nodes, edges, viewport }
 
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -115,3 +119,12 @@ CREATE TABLE IF NOT EXISTS  email_campaigns (
 --     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+
+-- Seed: one user for local/dev
+INSERT INTO users (cognito_sub, email, name)
+VALUES ('00000000-0000-0000-0000-000000000001', 'user1@example.com', 'User1')
+ON DUPLICATE KEY UPDATE
+  email = VALUES(email),
+  name = VALUES(name),
+  updated_at = CURRENT_TIMESTAMP;
