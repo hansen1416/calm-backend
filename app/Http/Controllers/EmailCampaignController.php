@@ -15,6 +15,9 @@ class EmailCampaignController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'mode' => ['required', 'in:include,exclude'],
+            'kind' => ['required', 'in:contact,group'],
+            'entity_id' => ['required', 'integer'],
             'graph_json' => ['required', 'array'],
         ]);
 
@@ -22,6 +25,9 @@ class EmailCampaignController extends Controller
         $campaign->user_id = 1; // TODO replace with $userId
         $campaign->name = $data['name'];
         $campaign->status = 'draft';
+        $campaign->mode = $data['mode'];
+        $campaign->kind = $data['kind'];
+        $campaign->entity_id = $data['entity_id'];
         $campaign->graph_json = $data['graph_json'];
         $campaign->save();
 
@@ -36,6 +42,10 @@ class EmailCampaignController extends Controller
 
         return response()->json([
             'name' => $email_campaign->name,
+            'status' => $email_campaign->status,
+            'mode' => $email_campaign->mode,
+            'kind' => $email_campaign->kind,
+            'entity_id' => $email_campaign->entity_id,
             'graph_json' => $email_campaign->graph_json,
         ]);
     }
@@ -48,11 +58,17 @@ class EmailCampaignController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'mode' => ['required', 'in:include,exclude'],
+            'kind' => ['required', 'in:contact,group'],
+            'entity_id' => ['required', 'integer'],
             'graph_json' => ['required', 'array'],
         ]);
 
         $email_campaign->name = $data['name'];
         $email_campaign->graph_json = $data['graph_json'];
+        $email_campaign->mode = $data['mode'];
+        $email_campaign->kind = $data['kind'];
+        $email_campaign->entity_id = $data['entity_id'];
         $email_campaign->save();
 
         return response()->json([
