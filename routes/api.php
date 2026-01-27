@@ -13,6 +13,7 @@ Route::put('/email-campaigns/{email_campaign}/graph', [EmailCampaignController::
 
 Route::get('/contacts', [ContactController::class, 'index']);
 Route::post('/contacts', [ContactController::class, 'store']);
+Route::post('/contacts/tags', [ContactController::class, 'storeTags']);
 
 Route::get('/groups', [GroupController::class, 'index']);
 Route::post('/groups', [GroupController::class, 'store']);
