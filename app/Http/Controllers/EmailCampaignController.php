@@ -8,6 +8,35 @@ use Illuminate\Http\Request;
 class EmailCampaignController extends Controller
 {
 
+    public function index(Request $request)
+    {
+        // TODO auth: resolve current user_id
+        // $userId = $request->user()->id;
+        $userId = 1;
+
+        $data = $request->validate([
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $campaigns = EmailCampaign::query()
+            ->where('user_id', $userId)
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
+            ->paginate($data['per_page'] ?? 20);
+
+        $campaigns->getCollection()->transform(function ($campaign) {
+            return [
+                'name' => $campaign->name,
+                'status' => $campaign->status,
+                'mode' => $campaign->mode,
+                'kind' => $campaign->kind,
+                'entity_id' => $campaign->entity_id,
+            ];
+        });
+
+        return response()->json($campaigns);
+    }
+
     public function store(Request $request)
     {
         // TODO auth: resolve current user_id

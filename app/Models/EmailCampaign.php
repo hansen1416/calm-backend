@@ -12,6 +12,9 @@ class EmailCampaign extends Model
         'user_id',
         'name',
         'status',
+        'mode',
+        'kind',
+        'entity_id',
         'graph_json',
     ];
 
