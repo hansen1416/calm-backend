@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\EmailCampaignController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\EmailCampaignController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('ping', fn () => response()->json(['ok' => true]));
@@ -12,3 +13,6 @@ Route::put('/email-campaigns/{email_campaign}/graph', [EmailCampaignController::
 
 Route::get('/contacts', [ContactController::class, 'index']);
 Route::post('/contacts', [ContactController::class, 'store']);
+
+Route::get('/groups', [GroupController::class, 'index']);
+Route::post('/groups', [GroupController::class, 'store']);
